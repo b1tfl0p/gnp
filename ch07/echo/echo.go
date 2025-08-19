@@ -46,7 +46,11 @@ func streamingEchoServer(ctx context.Context, network string, addr string) (net.
 	return s.Addr(), nil
 }
 
-func datagramEchoServer(ctx context.Context, network string, addr string) (net.Addr, error) {
+func datagramEchoServer(
+	ctx context.Context,
+	network string,
+	addr string,
+) (net.Addr, error) {
 	s, err := net.ListenPacket(network, addr)
 	if err != nil {
 		return nil, err

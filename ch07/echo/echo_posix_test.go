@@ -36,6 +36,7 @@ func TestEchoServerUnixDatagram(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Unlike unix socket, use net.ListenPacket for datagram-like behavior
 	cSocket := filepath.Join(dir, fmt.Sprintf("c%d.sock", os.Getpid()))
 	client, err := net.ListenPacket("unixgram", cSocket)
 	if err != nil {
@@ -48,6 +49,7 @@ func TestEchoServerUnixDatagram(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Write 3 "ping" messages
 	msg := make([]byte, 1024)
 	for range 3 {
 		_, err = client.WriteTo(msg, serverAddr)
@@ -56,6 +58,7 @@ func TestEchoServerUnixDatagram(t *testing.T) {
 		}
 	}
 
+	// Read 3 packets individually
 	buf := make([]byte, 1024)
 	for range 3 {
 		n, addr, err := client.ReadFrom(buf)

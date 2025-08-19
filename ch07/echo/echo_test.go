@@ -34,26 +34,30 @@ func TestEchoServerUnix(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	// Use net.Dial since unix socket is a streaming protocol
 	conn, err := net.Dial("unix", rAddr.String())
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer func() { _ = conn.Close() }()
 
+	// Write 3 "ping" messages
 	msg := []byte("ping")
-	for range 3 { // write 3 "ping" messages
+	for range 3 {
 		_, err = conn.Write(msg)
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
 
+	// Read once from the server
 	buf := make([]byte, 1024)
-	n, err := conn.Read(buf) // read once from the server
+	n, err := conn.Read(buf)
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	// A single read contains all 3 of the messages
 	expected := bytes.Repeat(msg, 3)
 	if !bytes.Equal(expected, buf[:n]) {
 		t.Fatalf("expected reply %q; actual reply %q", expected, buf[:n])
